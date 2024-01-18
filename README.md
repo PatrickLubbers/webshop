@@ -15,7 +15,7 @@ cart - columns: ID, user_ID, item_ID
 items - columns: ID, item_name, image_url
 username - columns: ID, username, password_hashed
 
-Het idee achter een table 'cart' ipv bv op te slaan in een session, was omdat ik makkelijker kon inloggen met verschillende users, en zo eenvoudig kon zien welke items er in de cart van elke user staat. 
+Het idee achter een table 'cart' ipv bv op te slaan in een session, was omdat ik makkelijker kon inloggen met verschillende users, en zo eenvoudig kon zien welke items er in de cart van elke user staat. Maar achteraf gezien had ik dit beter eerst in een session kunnen opslaan voordat je deze opgeslagen items in session middels een query insert in de database.
 
 
 
