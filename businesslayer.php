@@ -114,7 +114,7 @@ function hash_password($password){
 
 function do_login_user($user) {
 	$_SESSION['user'] = $user;
-	show_welcome_message($user);
+	show_welcome_message($_SESSION['user']);
 }
 
 function do_registration_user($connection, $user, $password) {

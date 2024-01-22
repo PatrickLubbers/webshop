@@ -18,7 +18,7 @@ function show_welcome_message($loginData) {
 function show_logout_button() {
 	echo "Click here to log out:";
 	echo '<form method="post">';
-	echo '<button type="submit" class="submit" name="logOut">log out </button>';
+	echo '<button type="submit" class="submit" name="logOut">log out</button>';
 	echo '</form>';
 }
 
@@ -30,6 +30,7 @@ function show_products($items) {
             <th>Image</th>
             <th>Item Name</th>
             <th>Price</th>
+			<th>Amount</th>
             <th>Add to cart</th>
           </tr>';
 	
@@ -40,8 +41,12 @@ function show_products($items) {
         echo '<td>' . $item['item_name'] . '</td>';
         echo '<td>' . $item['price'] . '</td>';
 		echo '<td>';
+		echo '<input type="number" name="amount[' . $item['id'] . ']" min="1" value="1" required>';
+		echo '</td>';
+		echo '<td>';
 		
 		//I want the input type to pass the itemID instead of the button
+		
 		echo '<input type="hidden" id="itemId" name="itemId" value="34657" />';
 		
 		echo '<button type="submit" class="submit" name="addToCart" value="' . $item['id'] . '">Add to Cart</button>'; //changed this code to change name of button

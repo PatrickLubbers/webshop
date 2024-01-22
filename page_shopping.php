@@ -7,7 +7,7 @@ include 'businesslayer.php';
 include 'presentationlayer.php';
 include 'styling.php';
 
-if (isset($user)) {
+if (isset($_SESSION['user'])) {
 	$user = $_SESSION['user'];
 	show_logout_button();
 } else {
@@ -21,12 +21,14 @@ $connection = connect_to_database(); //connects to database
 $userId = get_username_id($connection, $user);
 
 if (isset($_POST['logOut'])) {
-	unset($_SESSION['user']); 
+	unset($_SESSION['user']);
+	unset($_SESSION['cart']);
 }
 
 if (isset($_POST['addToCart'])) {
     $itemId = $_POST['addToCart'];
-	add_to_cart($itemId, $userId);
+	$amount = $_POST['amount'][$itemId];
+	add_to_cart($itemId, $userId, $amount);
     //insert_into_cart($connection, $itemId, $user, $userId); //inserts into database
 }
 

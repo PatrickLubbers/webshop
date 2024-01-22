@@ -14,6 +14,7 @@ if (isset($_POST['login_submit'])) {
 if (isset($_POST['register_submit'])) {
 	handle_registration($connection);
 }
+
 	?>
 	
 	<html>

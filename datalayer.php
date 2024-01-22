@@ -79,13 +79,13 @@ function get_specific_item_details($connection, $itemId) {
     return mysqli_fetch_assoc($result); //returns one row
 }
 
-function add_to_cart($itemId, $userId) {
+function add_to_cart($itemId, $userId, $amount) {
     if (!isset($_SESSION['cart'])) {
         $_SESSION['cart'] = array();
     }
 
     // Add the item to the cart session
-    $_SESSION['cart'][] = array('userId' => $userId, 'itemId' => $itemId);
+    $_SESSION['cart'][] = array('userId' => $userId, 'itemId' => $itemId, 'amount' => $amount);
 }
 
 function show_cart($connection) {
@@ -95,6 +95,7 @@ function show_cart($connection) {
         echo '<tr>
                 <th>Item Name</th>
                 <th>Item ID</th>
+				<th>Amount</th>
               </tr>';
 
         foreach ($_SESSION['cart'] as $cartItem) {
@@ -104,6 +105,7 @@ function show_cart($connection) {
             echo '<tr>';
             echo '<td>' . $itemDetails['item_name']	. '</td>';
             echo '<td>' . $itemId . '</td>';
+			echo '<td>' . $cartItem['amount'] . '</td>';
             echo '</tr>';
         }
 
@@ -113,13 +115,13 @@ function show_cart($connection) {
     }
 }
 
-function show_previous_orders($connection, $user, $userId) {
+function show_previous_orders($connection, $user, $userId) { //TODO: probably should be split and contents saved in array.
 
     // Check if the user is logged in
     if (isset($userId)) {  //NOTE: changed from if ($userId !== null) { To achieve uniformity
 	
         // Query to get items in the user's cart
-        $query = "SELECT cart.id, items.item_name, cart.user_id FROM cart 
+        $query = "SELECT cart.id, items.item_name, cart.user_id, cart.amount FROM cart 
                   JOIN items ON cart.item_id = items.id
                   WHERE cart.user_id = $userId";
 
@@ -132,12 +134,14 @@ function show_previous_orders($connection, $user, $userId) {
             echo '<tr>
                     <th>Item Name</th>
                     <th>User number</th>
+					<th>Amount</th>
                   </tr>';
 
             while ($row = mysqli_fetch_assoc($result)) {
                 echo '<tr>';
                 echo '<td>' . $row['item_name'] . '</td>';
                 echo '<td>' . $row['user_id'] . '</td>';
+				echo '<td>' . $row['amount'] . '</td>';
                 echo '</tr>';
             }
 
@@ -159,7 +163,8 @@ function place_order($userId, $user, $connection) {
     if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
         foreach ($_SESSION['cart'] as $cartItem) {
             $itemId = $cartItem['itemId'];
-            insert_into_cart($connection, $itemId, $user, $userId);
+			$amount = $cartItem['amount'];
+            insert_into_cart($connection, $itemId, $user, $userId, $amount);
         }
 
         //Clearing the session cart after placing the order
@@ -170,14 +175,14 @@ function place_order($userId, $user, $connection) {
     }
 }
 
-function insert_into_cart($connection, $itemId, $user, $userId) {
+function insert_into_cart($connection, $itemId, $user, $userId, $amount) {
 	
 	$userId = get_username_id($connection, $user);
 	
 	//get cart information
 	
         // Insert into the "cart" table
-        $query = "INSERT INTO cart (user_id, item_id) VALUES ($userId, $itemId)";
+        $query = "INSERT INTO cart (user_id, item_id, amount) VALUES ($userId, $itemId, $amount)";
         $result = mysqli_query($connection, $query);
 
         if (!$result) {
@@ -186,7 +191,7 @@ function insert_into_cart($connection, $itemId, $user, $userId) {
 		
     $itemDetails = get_specific_item_details($connection, $itemId);
 		//success message
-    echo "Item added to the cart: " . $itemDetails['item_name'];
+    echo "Order made for item: " . $itemDetails['item_name'];
 	echo "<br>";
 }
 
