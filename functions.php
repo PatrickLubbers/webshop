@@ -68,7 +68,6 @@ function validate_login($connection) {
 	$user = $password = ""; //do you set both variables to "" like this?
 	$userErr = $passwordErr = "";
 	$valid = false;
-	//add emailErr variable
 	
 	//do validation
 	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -183,7 +182,11 @@ function store_session_username($user, $password, $connection){
 }
 */
 
-function retrieve_userdata($connection, $user) {	
+function retrieve_userdata($connection, $user) {
+
+	// Prevent mysql injections
+	$user = mysqli_real_escape_string($connection, $user);
+	
     //Gets username from the 'username' table instead of ID
     $query = "SELECT password_hashed FROM username WHERE username = '$user'";
     $result = mysqli_query($connection, $query);
@@ -210,6 +213,10 @@ function do_registration_user($connection, $user, $password) {
 
 //add an insert of the $password 
 function add_user_database($connection, $user, $hashedPassword){
+	
+		//Prevent mysql injections
+		$user= mysqli_real_escape_string($connection, $user);
+		$hashedPassword = mysqli_real_escape_string($connection, $hashedPassword);
 
 		$insertQuery = "INSERT INTO username (username, password_hashed) VALUES ('$user', '$hashedPassword')";
 		mysqli_query($connection, $insertQuery);
@@ -237,6 +244,7 @@ function get_username_id($connection, $user) {
 		return null;
 	}
 }
+
 
 /*
 TODO FIX:
