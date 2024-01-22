@@ -15,6 +15,7 @@ TODO:
 - Improve styling
 - Make it possible to record the payed price for a product
 - ..?
+- Use different user instead of 'root' in phpmyadmin
 
 
 
