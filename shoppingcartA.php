@@ -29,8 +29,4 @@ mysqli_close($connection);
 //the errors indeed came from some refactoring efforts renaming variables $dbConnection to $connection
 //but in this file $connection was not defined yet. What is better, defining this variable in here 
 //or in the functions table? In function.php would enable me to cut out 1 line of code from both shoppingcartA.php and username.php
-
-//the errors indeed came from some refactoring efforts renaming variables $dbConnection to $connection
-//but in this file $connection was not defined yet. What is better, defining this variable in here 
-//or in the functions table? In function.php would enable me to cut out 1 line of code from both shoppingcartA.php and username.php
 ?>

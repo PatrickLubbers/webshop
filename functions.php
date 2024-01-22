@@ -1,23 +1,5 @@
 <?php
 
-/*
-The improved functions.php, what has been done:
-
--Overall structure of code improved 
--Password encryption improved, password is also not stored in session anymore. 
--I changed function get_items($connection) and show_shopping_page(), so that show_shopping_page
--doesnt loop through database anymore, but through array as is returned by get_items. 
--More functions can profit from this, but havent refactored all of them yet
-
--Created registration and login in two two separate forms, where this was first done in the same input fields
--Chopped up functions into smaller pieces, put in place more error statements
-
-What still needs to be done:
--I had some trouble creating a new account in phpmyadmin, I ran into some errors when trying to create a new user. 
--From now on committing changes the proper way
-
-*/
-
 $connection = connect_to_database();
 
 
@@ -59,6 +41,8 @@ function show_shopping_page($items) {
     echo '</table>';
     echo '</form>';
 }
+
+//testing
 
 
 if (isset($_POST['login_submit'])) {
@@ -278,6 +262,15 @@ function get_item_details($connection, $itemId) {
     $query = "SELECT * FROM items WHERE id = $itemId";
     $result = mysqli_query($connection, $query);
     return mysqli_fetch_assoc($result);
+}
+
+function add_to_cart($itemId) {
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = array();
+    }
+
+    // Add the item to the cart session
+    $_SESSION['cart'][] = $itemId;
 }
 
 //#######################################
