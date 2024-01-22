@@ -53,10 +53,6 @@ function authenticate_user($connection, $user, $password) {
     if ($userData !== null) {
         // Username exists, now verify the password
         $hashedPassword = $userData['password_hashed'];
-		
-		//Debugging statements
-		echo "Entered Password: " . $password . "<br>";
-        echo "Hashed Password from Database: " . $hashedPassword . "<br>";
 
         if (password_verify($password, $hashedPassword)) {
             // Password is correct

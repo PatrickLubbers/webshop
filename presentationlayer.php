@@ -4,7 +4,7 @@
 
 function show_welcome_message($loginData) {
 	echo "Welcome " . $loginData . " !";
-	echo '<a href="shoppingpage.php">';
+	echo '<a href="page_shopping.php">';
 	echo '<br>';
 	echo '<button type="submit">go to shopping mall</button>';
 	echo '</a>';
