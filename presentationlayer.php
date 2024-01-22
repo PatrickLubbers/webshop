@@ -2,6 +2,11 @@
 
 //Presentation layer:
 
+function show_welcome($user) {
+	echo "welcome $user!";
+	echo "<br><br>";
+}
+
 function show_welcome_message($loginData) {
 	echo "Welcome " . $loginData . " !";
 	echo '<a href="page_shopping.php">';
@@ -10,8 +15,14 @@ function show_welcome_message($loginData) {
 	echo '</a>';
 }
 
-function show_products($items) { 
+function show_logout_button() {
+	echo "Click here to log out:";
+	echo '<form method="post">';
+	echo '<button type="submit" class="submit" name="logOut">log out </button>';
+	echo '</form>';
+}
 
+function show_products($items) { 
     echo '<form method="post">';
     echo '<table>';
     echo '<tr>
@@ -33,13 +44,13 @@ function show_products($items) {
 		//I want the input type to pass the itemID instead of the button
 		echo '<input type="hidden" id="itemId" name="itemId" value="34657" />';
 		
-		echo '<button type="submit" name="addToCart" value="' . $item['id'] . '">Add to Cart</button>'; //changed this code to change name of button
+		echo '<button type="submit" class="submit" name="addToCart" value="' . $item['id'] . '">Add to Cart</button>'; //changed this code to change name of button
 		echo '</td>';
         echo '</tr>';
     }
 	
 	echo '<tr>';
-    echo '<td><button type="submit" name="placeOrder">Place Order</button></td>';
+    echo '<td><button type="submit" class="submit" name="placeOrder">Place Order</button></td>';
     echo '</tr>';
 
     echo '</table>';

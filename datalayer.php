@@ -146,12 +146,16 @@ function show_previous_orders($connection, $user, $userId) {
             die("Error retrieving cart items: " . mysqli_error($connection));
         }
     } else {
-        echo "User not found."; 
+        echo "User not found. Guests do not have an order history."; 
     }
 }
 
 function place_order($userId, $user, $connection) {
-
+	//Check if the user == "guest"
+    if (check_if_guest($user)) {
+        return; // Stops rest of function
+    }
+	
     if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
         foreach ($_SESSION['cart'] as $cartItem) {
             $itemId = $cartItem['itemId'];
@@ -165,7 +169,6 @@ function place_order($userId, $user, $connection) {
         echo "Your cart is empty. Add items before placing an order.";
     }
 }
-
 
 function insert_into_cart($connection, $itemId, $user, $userId) {
 	

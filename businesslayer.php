@@ -4,7 +4,6 @@
 
 $connection = connect_to_database();
 
-
 //business layer
 function handle_login($connection) {
 	$loginData = validate_login($connection); //necessary to check whether right data has been passed in login form
@@ -121,6 +120,16 @@ function do_login_user($user) {
 function do_registration_user($connection, $user, $password) {
 	$hashedPassword = hash_password($password);
 	add_user_database($connection, $user, $hashedPassword);
+}
+
+function check_if_guest($user) {
+    //Check if the user == "guest"
+    if ($user == "guest") {
+        echo 'Guest users cannot place orders. Please <a href="http://localhost/educom/webshop/page_login.php">login</a>';
+        return true; //user is guest
+    }
+
+    return false; //user is not guest
 }
 
 ?>

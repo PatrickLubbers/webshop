@@ -5,6 +5,7 @@ session_start();
 include 'datalayer.php';
 include 'businesslayer.php';
 include 'presentationlayer.php';
+include 'styling.php';
 
 if (isset($_POST['login_submit'])) {
 	handle_login($connection);
@@ -13,11 +14,6 @@ if (isset($_POST['login_submit'])) {
 if (isset($_POST['register_submit'])) {
 	handle_registration($connection);
 }
-
-show_form();
-//check_login($connection);
-
-function show_form() {
 	?>
 	
 	<html>
@@ -50,7 +46,3 @@ function show_form() {
 </body>
 </html>
 	
-	<?php
-}
-
-?>

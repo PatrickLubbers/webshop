@@ -5,12 +5,24 @@ session_start();
 include 'datalayer.php';
 include 'businesslayer.php';
 include 'presentationlayer.php';
+include 'styling.php';
 
-$user = $_SESSION['user'];
+if (isset($user)) {
+	$user = $_SESSION['user'];
+	show_logout_button();
+} else {
+	$user = "guest";
+}
+
+show_welcome($user);
 
 $connection = connect_to_database(); //connects to database
 
 $userId = get_username_id($connection, $user);
+
+if (isset($_POST['logOut'])) {
+	unset($_SESSION['user']); 
+}
 
 if (isset($_POST['addToCart'])) {
     $itemId = $_POST['addToCart'];
@@ -23,9 +35,6 @@ if (isset($_POST['placeOrder'])) {
 }
 
 $items = get_items($connection);
-
-echo "welcome $user!";
-echo "<br><br>";
 
 show_products($items); //retrieves data from database
 show_cart($connection);
