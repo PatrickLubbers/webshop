@@ -44,4 +44,6 @@ show_previous_orders($connection, $user, $userId); //retrieves data from databas
 
 mysqli_close($connection);
 
+//TODO: Add total price / price per product to orders
+
 ?>

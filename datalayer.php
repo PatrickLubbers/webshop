@@ -70,7 +70,7 @@ function get_items($connection) {
 	while ($row = mysqli_fetch_assoc($result)) {
 			$items[] = $row; //misses closing bracket
 	}
-	return $items;
+		return $items;
 }
 
 function get_specific_item_details($connection, $itemId) {
@@ -115,43 +115,23 @@ function show_cart($connection) {
     }
 }
 
-function show_previous_orders($connection, $user, $userId) { //TODO: probably should be split and contents saved in array.
-
-    // Check if the user is logged in
-    if (isset($userId)) {  //NOTE: changed from if ($userId !== null) { To achieve uniformity
-	
-        // Query to get items in the user's cart
-        $query = "SELECT cart.id, items.item_name, cart.user_id, cart.amount FROM cart 
-                  JOIN items ON cart.item_id = items.id
-                  WHERE cart.user_id = $userId";
+function get_order_history($connection, $user, $userId) {
+		// Query to get items in the user's cart
+        $query = "SELECT orders.id, items.item_name, orders.user_id, orders.amount FROM orders
+                  JOIN items ON orders.item_id = items.id
+                  WHERE orders.user_id = $userId";
 
         $result = mysqli_query($connection, $query);
-
-        if ($result) {
-            // Display items in the cart
-            echo '<h4>Items that you previously ordered:</h4>';
-            echo '<table>';
-            echo '<tr>
-                    <th>Item Name</th>
-                    <th>User number</th>
-					<th>Amount</th>
-                  </tr>';
-
-            while ($row = mysqli_fetch_assoc($result)) {
-                echo '<tr>';
-                echo '<td>' . $row['item_name'] . '</td>';
-                echo '<td>' . $row['user_id'] . '</td>';
-				echo '<td>' . $row['amount'] . '</td>';
-                echo '</tr>';
-            }
-
-            echo '</table>';
-        } else {
-            die("Error retrieving cart items: " . mysqli_error($connection));
-        }
-    } else {
-        echo "User not found. Guests do not have an order history."; 
-    }
+		
+		while ($row = mysqli_fetch_assoc($result)) {
+			$orderHistory[] = $row;
+		}
+		
+		if (empty($orderHistory)) {
+			$orderHistory = ""; //if there is no order history, initialize it here
+		} else {
+			return $orderHistory;
+		}
 }
 
 function place_order($userId, $user, $connection) {
@@ -178,15 +158,13 @@ function place_order($userId, $user, $connection) {
 function insert_into_cart($connection, $itemId, $user, $userId, $amount) {
 	
 	$userId = get_username_id($connection, $user);
-	
-	//get cart information
-	
-        // Insert into the "cart" table
-        $query = "INSERT INTO cart (user_id, item_id, amount) VALUES ($userId, $itemId, $amount)";
+		
+        // Insert into the "orders" table
+        $query = "INSERT INTO orders (user_id, item_id, amount) VALUES ($userId, $itemId, $amount)";
         $result = mysqli_query($connection, $query);
 
         if (!$result) {
-            die("Error inserting into cart: " . mysqli_error($connection));
+            die("Error inserting into orders table: " . mysqli_error($connection));
         }
 		
     $itemDetails = get_specific_item_details($connection, $itemId);

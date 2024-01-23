@@ -62,5 +62,42 @@ function show_products($items) {
     echo '</form>';
 }
 
+function show_previous_orders($connection, $user, $userId) { //Done: split up function and retrieve data from array
+	
+    // Check if the user is logged in //Should isset condition be placed here or outside function?
+    if (isset($userId)) {  
+		
+		$orderHistory = get_order_history($connection, $user, $userId);
+
+        echo '<h4>Items that you previously ordered:</h4>';
+		
+		if (!empty($orderHistory)) {
+		
+			foreach ($orderHistory as $historyRow) {
+				// Display items in the cart
+				echo '<table>';
+				echo '<tr>
+						<th>Item Name</th>
+						<th>User number</th>
+						<th>Amount</th>
+					</tr>';
+
+				echo '<tr>';
+                echo '<td>' . $historyRow['item_name'] . '</td>';
+                echo '<td>' . $historyRow['user_id'] . '</td>';
+				echo '<td>' . $historyRow['amount'] . '</td>';
+                echo '</tr>';
+
+            echo '</table>';
+			} 
+			
+		} else {
+        echo "User not found. Guests do not have an order history."; 
+		} 
+	} else {
+		echo "Nothing to see here.";
+	}
+}
+
 
 ?>
