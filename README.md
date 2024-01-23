@@ -6,7 +6,7 @@ Het is een tijdje terug sinds ik hier voor het laatst aan gewerkt heb.
 
 EDIT:
 
-Code has been restructured in 3 different layers (splitting logic), and two different pages (splitting the view). 
+Code has been restructured in 3 different layers (splitting logic), and four different pages (splitting the view with home - browse shop - login - contact). 
 Items can now be added in a session cart before inserting it into the database.
 The old cart has been converted into an overview of order history. 
 
