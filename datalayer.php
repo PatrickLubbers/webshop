@@ -4,6 +4,10 @@ $connection = connect_to_database();
 
 //############# Data layer
 
+function logError($msg) {
+	echo "logging to server: " . $msg;
+}
+
 function connect_to_database() {
     $host = "localhost";
     $username = "root";
@@ -13,22 +17,25 @@ function connect_to_database() {
     $connection = mysqli_connect($host, $username, $password, $database);
 
     if (!$connection) {
-        die("Connection failed: " . mysqli_connect_error());
+		throw new Exception("Cannot connect to Db" . mysqli_connect_error());
     }
-
     return $connection;
 }
 
 function add_user_database($connection, $user, $hashedPassword){
 	
-		//Prevent mysql injections
-		$user= mysqli_real_escape_string($connection, $user);
-		$hashedPassword = mysqli_real_escape_string($connection, $hashedPassword);
+	//Prevent mysql injections
+	$user= mysqli_real_escape_string($connection, $user);
+	$hashedPassword = mysqli_real_escape_string($connection, $hashedPassword);
 
-		$insertQuery = "INSERT INTO username (username, password_hashed) VALUES ('$user', '$hashedPassword')";
-		mysqli_query($connection, $insertQuery);
-		//make query: add a username
-		//make connection to database
+	$insertQuery = "INSERT INT username (username, password_hashed) VALUES ('$user', '$hashedPassword')"; //now whenever wanting to register someone it says user already exists
+	$result = mysqli_query($connection, $insertQuery);
+	
+	if (!$result) {
+		throw new Exception("Something wrong with query" . $insertQuery); 
+		//mysql_error does a check on the query, but it doesnt throw the exception.
+	}
+	return $result;
 }
 
 function retrieve_userdata($connection, $user) {
@@ -85,33 +92,6 @@ function add_to_cart($itemId, $userId, $amount) {
 
     // Add the item to the cart session
     $_SESSION['cart'][] = array('userId' => $userId, 'itemId' => $itemId, 'amount' => $amount);
-}
-
-function show_cart($connection) {
-    if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
-        echo '<h3>Shopping Cart:</h3>';
-        echo '<table>';
-        echo '<tr>
-                <th>Item Name</th>
-                <th>Item ID</th>
-				<th>Amount</th>
-              </tr>';
-
-        foreach ($_SESSION['cart'] as $cartItem) {
-			$itemId = $cartItem['itemId'];
-			$itemDetails = get_specific_item_details($connection, $itemId); // I think I should improve the structure
-			
-            echo '<tr>';
-            echo '<td>' . $itemDetails['item_name']	. '</td>';
-            echo '<td>' . $itemId . '</td>';
-			echo '<td>' . $cartItem['amount'] . '</td>';
-            echo '</tr>';
-        }
-
-        echo '</table>';
-    } else {
-        echo 'Your cart is empty.';
-    }
 }
 
 function get_order_history($connection, $user, $userId) {

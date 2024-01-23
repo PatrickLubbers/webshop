@@ -34,7 +34,7 @@ function validate_login($connection) {
 		if (empty($userErr) && empty($passwordErr)) {
 				$userData = authenticate_user($connection, $user, $password);
 				
-			if ($userData == "non-existent" || $userData == "password incorrect") { // I dont think this is the best way of doing things
+			if ($userData == null || $userData == "password incorrect") { // I dont think this is the best way of doing things
 					$userErr = "Gebruiker onbekend of verkeerd password";
 			} else {
 					$valid = true;
@@ -43,27 +43,6 @@ function validate_login($connection) {
 	}
 	//returns array with all fields
 	return ['user' => $user, 'userErr' => $userErr, 'password' => $password, 'passwordErr' => $passwordErr, 'valid' => $valid];
-}
-
-function authenticate_user($connection, $user, $password) {
-	// Authenticate username
-    $userData = retrieve_userdata($connection, $user);
-
-    if ($userData !== null) {
-        // Username exists, now verify the password
-        $hashedPassword = $userData['password_hashed'];
-
-        if (password_verify($password, $hashedPassword)) {
-            // Password is correct
-            return "credentials correct";
-        } else {
-            // Password is incorrect
-            return "password incorrect";
-        }
-    } else {
-        // Username does not exist
-        return "non-existent";
-    }
 }
 
 function handle_registration($connection) {
@@ -95,8 +74,8 @@ function validate_registration($connection) {
 				$userErr = "Password is verplicht";
 		}
 		if (empty($userErr) && empty($passwordErr)) { //both fields filled in?
-				$userData = authenticate_user($connection, $user, $password); //check whether exists in database
-				if ($userData == "password incorrect") {
+				$userData = authenticate_user($connection, $user, $password); 
+				if ($userData !== null) { 		//dit kan nooit nu null zijn
 					$userErr = "Gebruiker bestaat al!";
 				} else {
 					$valid = true;
@@ -105,6 +84,27 @@ function validate_registration($connection) {
 	}
 	//returns array with all fields
 	return ['user' => $user, 'userErr' => $userErr, 'password' => $password, 'passwordErr' => $passwordErr, 'valid' => $valid];
+}
+
+function authenticate_user($connection, $user, $password) {
+	// Authenticate username
+    $userData = retrieve_userdata($connection, $user);
+
+    if ($userData !== null) {
+        // Username exists, now verify the password
+        $hashedPassword = $userData['password_hashed'];
+
+        if (password_verify($password, $hashedPassword)) {
+            // Password is correct
+            return "credentials correct";
+        } else {
+            // Password is incorrect
+            return "password incorrect";
+        }
+    } else {
+        // Username does not exist
+        return null;
+    }
 }
 
 function hash_password($password){
@@ -118,8 +118,15 @@ function do_login_user($user) {
 }
 
 function do_registration_user($connection, $user, $password) {
+	
+	try {
 	$hashedPassword = hash_password($password);
 	add_user_database($connection, $user, $hashedPassword);
+	} catch (Exception $er) {
+		$genericError = "er is een technische storing. Inloggen is niet mogelijk. Probeer later nog eens";
+
+	}
+	
 }
 
 function check_if_guest($user) {
@@ -131,5 +138,41 @@ function check_if_guest($user) {
 
     return false; //user is not guest
 }
+
+//TODO: add calculation method. Prices for different products are already stored in the 'items' table.
+//When added to cart, the price column should also be read at the right item_id, like amount.
+//PHP might be loosely typed, but price column has been stored as a string not an integer, can it 
+//Be calculated with? 
+
+
+//Necessary: $_SESSION['total_price'], after every 'add to cart' click, the the $_SESSION['cart'] should be
+//appended with the amount that an item costs, times the number for amount. For that to work, at least
+//at some point amount, price and $_SESSION['total_price'] should be integers.
+
+//For that, amount and price should be converted from strings to integers. calculations run, and stored
+//in $_SESSION['total_price'], which itself holds an integer, as it will always have to be calculated with.
+//Before inserting in 'orders' table, the $_SESSION['total_price'] should be converted from integer to string
+
+//that is assuming inserting an integer $_SESSION['total_price'] wont work.
+
+/* flow:
+
+after $_POST add to cart is clicked: check which item has been clicked on item_id
+
+function: retrieve 'amount' and 'prices': convert variables 'amount' and 'prices' to integers
+
+function 2: calculate total cost: Init $_SESSION['total_cost']
+amount * prices == $sum, return $_SESSION['total_cost'] += $sum
+
+Perhaps it is better to make $_SESSION['total_cost'] an array that can be appended with new numbers
+and once the place order button is clicked, the sum of $_SESSION['total_cost'] will be inserted 
+in total_cost column
+
+Pass $_SESSION['total_cost'] as argument...... where
+
+modify insert_into_orders_table so it can insert a column total_cost as well. Pass
+
+*/
+
 
 ?>
