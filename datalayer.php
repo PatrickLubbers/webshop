@@ -19,6 +19,18 @@ function connect_to_database() {
     return $connection;
 }
 
+function add_user_database($connection, $user, $hashedPassword){
+	
+		//Prevent mysql injections
+		$user= mysqli_real_escape_string($connection, $user);
+		$hashedPassword = mysqli_real_escape_string($connection, $hashedPassword);
+
+		$insertQuery = "INSERT INTO username (username, password_hashed) VALUES ('$user', '$hashedPassword')";
+		mysqli_query($connection, $insertQuery);
+		//make query: add a username
+		//make connection to database
+}
+
 function retrieve_userdata($connection, $user) {
 
 	// Prevent mysql injections
@@ -36,19 +48,6 @@ function retrieve_userdata($connection, $user) {
         //Username does not exist, nothing to return
         return null;
     }	
-}
-
-
-function add_user_database($connection, $user, $hashedPassword){
-	
-		//Prevent mysql injections
-		$user= mysqli_real_escape_string($connection, $user);
-		$hashedPassword = mysqli_real_escape_string($connection, $hashedPassword);
-
-		$insertQuery = "INSERT INTO username (username, password_hashed) VALUES ('$user', '$hashedPassword')";
-		mysqli_query($connection, $insertQuery);
-		//make query: add a username
-		//make connection to database
 }
 
 function get_username_id($connection, $user) {
@@ -144,7 +143,7 @@ function place_order($userId, $user, $connection) {
         foreach ($_SESSION['cart'] as $cartItem) {
             $itemId = $cartItem['itemId'];
 			$amount = $cartItem['amount'];
-            insert_into_cart($connection, $itemId, $user, $userId, $amount);
+            insert_into_orders_table($connection, $itemId, $user, $userId, $amount);
         }
 
         //Clearing the session cart after placing the order
@@ -155,7 +154,7 @@ function place_order($userId, $user, $connection) {
     }
 }
 
-function insert_into_cart($connection, $itemId, $user, $userId, $amount) {
+function insert_into_orders_table($connection, $itemId, $user, $userId, $amount) {
 	
 	$userId = get_username_id($connection, $user);
 		
